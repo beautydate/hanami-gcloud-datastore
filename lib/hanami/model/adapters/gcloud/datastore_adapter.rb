@@ -70,6 +70,11 @@ module Hanami
             ).find(id)
           end
 
+          # Empties the given collection.
+          #
+          # @param collection [Symbol] the target collection (it must be mapped).
+          #
+          # @since 0.1.0
           def clear(collection)
             raise NotImplementedError
           end

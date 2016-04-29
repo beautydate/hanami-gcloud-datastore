@@ -61,6 +61,20 @@ describe Hanami::Model::Adapters::Gcloud::DatastoreAdapter do
     end
   end
 
+  describe '#find' do
+    let(:entity) { TestUser.new(name: 'test', age: 30) }
+
+    it 'when no entity are persisted' do
+      @adapter.find(collection, -8).must_equal nil
+    end
+
+    it 'when entity are persisted' do
+      result = @adapter.create(collection, entity)
+
+      @adapter.find(collection, result.id).must_equal result
+    end
+  end
+
   describe '#clear' do
     it 'raises an error' do
       -> { @adapter.clear(collection) }.must_raise NotImplementedError
