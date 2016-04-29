@@ -26,7 +26,7 @@ Or install it yourself as:
 - [x] .find - Fetch an entity from the collection by its ID
 - [ ] .first - Fetch the first entity from the collection
 - [ ] .last - Fetch the last entity from the collection
-- [ ] .clear - Delete all the records from the collection
+- [x] ~~.clear - Delete all the records from the collection~~ *unsupported*
 - [ ] .query - Fabricates a query object
 
 ## Development

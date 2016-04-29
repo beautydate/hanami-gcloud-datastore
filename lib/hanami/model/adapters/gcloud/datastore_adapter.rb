@@ -70,6 +70,10 @@ module Hanami
             ).find(id)
           end
 
+          def clear(collection)
+            raise NotImplementedError
+          end
+
           # Fabricates a command for the given query.
           #
           # @param query [Hanami::Model::Adapters::Gcloud::Datastore::Query] the

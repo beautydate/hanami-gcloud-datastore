@@ -60,4 +60,10 @@ describe Hanami::Model::Adapters::Gcloud::DatastoreAdapter do
       @adapter.find(collection, result.id).must_equal result
     end
   end
+
+  describe '#clear' do
+    it 'raises an error' do
+      -> { @adapter.clear(collection) }.must_raise NotImplementedError
+    end
+  end
 end
