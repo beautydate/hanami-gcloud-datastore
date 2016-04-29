@@ -57,6 +57,7 @@ describe Hanami::Model::Adapters::Gcloud::DatastoreAdapter do
       result = @adapter.create(collection, entity)
 
       result.id.wont_be_nil
+      @adapter.find(collection, result.id).must_equal result
     end
   end
 end

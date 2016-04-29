@@ -54,6 +54,22 @@ module Hanami
             ).create(entity)
           end
 
+          # Returns a unique record from the given collection, with the given
+          # id.
+          #
+          # @param collection [Symbol] the target collection (it must be mapped).
+          # @param id [Object] the identity of the object.
+          #
+          # @return [Object] the entity or nil if not found
+          #
+          # @api private
+          # @since 0.1.0
+          def find(collection, id)
+            command(
+              query(collection)
+            ).find(id)
+          end
+
           # Fabricates a command for the given query.
           #
           # @param query [Hanami::Model::Adapters::Gcloud::Datastore::Query] the

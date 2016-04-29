@@ -26,7 +26,7 @@ module Hanami
               @dataset, @mapped_collection = dataset, mapped_collection
             end
 
-            # Creates a entity for the given hanami entity and assigns an id.
+            # Creates an entity for the given hanami entity and assigns an id.
             #
             # @param entity [Object] the entity to persist
             #
@@ -46,6 +46,32 @@ module Hanami
               entity
             end
 
+            # Finds an entity for the given hanami entity and assigns an id.
+            #
+            # @param entity [Object] the entity to persist
+            #
+            # @see Hanami::Model::Adapters::Gcloud::Datastore::Command#create
+            #
+            # @return the primary key of the created record
+            #
+            # @api private
+            # @since 0.1.0
+            def find(id)
+              entity = @dataset.find kind, id
+              return nil if entity.nil?
+              _deserialize(entity)
+            end
+
+            # Return datastore kind name for entity
+            #
+            # @return [String] entity Kind
+            #
+            # @api private
+            # @since 0.1.0
+            def kind
+              @mapped_collection.entity.to_s
+            end
+
             private
 
             # Return datastore key for entity
@@ -55,7 +81,7 @@ module Hanami
             # @api private
             # @since 0.1.0
             def key_for(entity)
-              @dataset.key @mapped_collection.name.to_s, entity.id
+              @dataset.key kind, entity.id
             end
 
             # Serialize the given entity before to persist in the datastore.
@@ -66,6 +92,18 @@ module Hanami
             # @since 0.1.0
             def _serialize(entity)
               @mapped_collection.serialize(entity)
+            end
+
+            # Deserialize the given datastore entity to return
+            #
+            # @return [Hash] the deserialized entity
+            #
+            # @api private
+            # @since 0.1.0
+            def _deserialize(entity)
+              @mapped_collection.entity.new(
+                entity.properties.to_h.merge(id: entity.key.id)
+              )
             end
           end
         end

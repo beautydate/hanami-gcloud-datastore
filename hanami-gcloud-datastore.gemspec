@@ -20,10 +20,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_runtime_dependency 'hanami-model', '~> 0.5'
-  # This version has a bug, see:
-  # https://github.com/GoogleCloudPlatform/gcloud-ruby/issues/635
-  # So, we use a unstable version in Gemfile.
-  # spec.add_runtime_dependency 'gcloud',       '~> 0.7.2'
+  spec.add_runtime_dependency 'gcloud',       '~> 0.7.2'
 
   spec.add_development_dependency 'bundler',  '~> 1.11'
   spec.add_development_dependency 'rake',     '~> 10.0'

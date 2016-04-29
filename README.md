@@ -16,9 +16,18 @@ Or install it yourself as:
 
     $ gem install hanami-gcloud-datastore
 
-## Usage
+## Repository supporting...
 
-TODO: Write usage instructions here
+- [ ] .persist(entity) – Create or update an entity
+- [x] .create(entity) – Create a record for the given entity
+- [ ] .update(entity) – Update the record corresponding to the given entity
+- [ ] .delete(entity) – Delete the record corresponding to the given entity
+- [ ] .all - Fetch all the entities from the collection
+- [x] .find - Fetch an entity from the collection by its ID
+- [ ] .first - Fetch the first entity from the collection
+- [ ] .last - Fetch the last entity from the collection
+- [ ] .clear - Delete all the records from the collection
+- [ ] .query - Fabricates a query object
 
 ## Development
 

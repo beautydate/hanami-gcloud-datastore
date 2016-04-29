@@ -64,8 +64,10 @@ module Hanami
                 scope = scope.public_send(method, *args)
               end
 
-              scope
+              @collection
             end
+
+            alias_method :run, :scoped
           end
         end
       end
