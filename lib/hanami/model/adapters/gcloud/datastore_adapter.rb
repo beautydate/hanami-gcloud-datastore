@@ -79,6 +79,18 @@ module Hanami
             raise NotImplementedError
           end
 
+          # Deletes a entity in the dataset corresponding to the given entity.
+          #
+          # @param collection [Symbol] the target collection (it must be mapped).
+          # @param entity [Object] the entity to delete
+          #
+          # @since 0.1.0
+          def delete(collection, entity)
+            command(
+              query(collection)
+            ).delete(entity)
+          end
+
           # Fabricates a command for the given query.
           #
           # @param query [Hanami::Model::Adapters::Gcloud::Datastore::Query] the

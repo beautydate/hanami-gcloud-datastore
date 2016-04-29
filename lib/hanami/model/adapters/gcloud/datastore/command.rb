@@ -34,7 +34,6 @@ module Hanami
               @collection.insert(entity)
             end
 
-
             # Finds an entity for the given hanami entity.
             #
             # @param id [Integer] the id of entity
@@ -47,6 +46,18 @@ module Hanami
             # @since 0.1.0
             def find(id)
               @collection.find(id)
+            end
+
+            # Deletes datastore entity.
+            #
+            # @param entity [Object] the entity to delete
+            #
+            # @see Hanami::Model::Adapters::Gcloud::DatastoreAdapter#delete
+            #
+            # @api private
+            # @since 0.1.0
+            def delete(entity)
+              @collection.delete(entity)
             end
           end
         end

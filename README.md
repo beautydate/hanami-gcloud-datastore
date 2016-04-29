@@ -21,7 +21,7 @@ Or install it yourself as:
 - [ ] .persist(entity) – Create or update an entity
 - [x] .create(entity) – Create a record for the given entity
 - [ ] .update(entity) – Update the record corresponding to the given entity
-- [ ] .delete(entity) – Delete the record corresponding to the given entity
+- [x] .delete(entity) – Delete the record corresponding to the given entity
 - [ ] .all - Fetch all the entities from the collection
 - [x] .find - Fetch an entity from the collection by its ID
 - [ ] .first - Fetch the first entity from the collection

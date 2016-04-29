@@ -50,8 +50,6 @@ module Hanami
             #
             # @param entity [Object] the entity to persist
             #
-            # @see Hanami::Model::Adapters::Gcloud::Datastore::Command#create
-            #
             # @return the primary key of the created record
             #
             # @api private
@@ -60,6 +58,16 @@ module Hanami
               entity = @dataset.find kind, id
               return nil if entity.nil?
               _deserialize(entity)
+            end
+
+            # Deletes an entity
+            #
+            # @param entity [Object] the entity to delete
+            #
+            # @api private
+            # @since 0.1.0
+            def delete(entity)
+              @dataset.delete key_for(entity)
             end
 
             # Return datastore kind name for entity

@@ -75,6 +75,18 @@ describe Hanami::Model::Adapters::Gcloud::DatastoreAdapter do
     end
   end
 
+  describe '#delete' do
+    let(:entity) { TestUser.new(name: 'test', age: 30) }
+
+    it 'when entity are persisted' do
+      subject = @adapter.create(collection, entity)
+
+      @adapter.delete(collection, subject).must_equal true
+
+      @adapter.find(collection, subject.id).must_equal nil
+    end
+  end
+
   describe '#clear' do
     it 'raises an error' do
       -> { @adapter.clear(collection) }.must_raise NotImplementedError
