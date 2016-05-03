@@ -54,6 +54,34 @@ module Hanami
             ).create(entity)
           end
 
+          # Updates a entity in the datastore corresponding to the given hanami entity.
+          #
+          # @param collection [Symbol] the target collection (it must be mapped).
+          # @param entity [Object] the entity to update
+          #
+          # @return [Object] the entity
+          #
+          # @since 0.1.0
+          def update(collection, entity)
+            command(
+              query(collection)
+            ).update(entity)
+          end
+
+          # Persists a entity in the datastore corresponding to the given hanami entity.
+          #
+          # @param collection [Symbol] the target collection (it must be mapped).
+          # @param entity [Object] the entity to persist
+          #
+          # @return [Object] the entity
+          #
+          # @since 0.1.0
+          def persist(collection, entity)
+            command(
+              query(collection)
+            ).persist(entity)
+          end
+
           # Returns a unique record from the given collection, with the given
           # id.
           #

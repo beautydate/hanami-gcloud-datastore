@@ -24,14 +24,38 @@ module Hanami
             #
             # @param entity [Object] the entity to persist
             #
-            # @see Hanami::Model::Adapters::Gcloud::Dataset::Collection#insert
+            # @see Hanami::Model::Adapters::Gcloud::Dataset::Collection#persist
             #
             # @return the primary key of the just created record.
             #
             # @api private
             # @since 0.1.0
             def create(entity)
-              @collection.insert(entity)
+              @collection.persist(entity)
+            end
+
+            # Updates an entity for the given hanami entity.
+            #
+            # @param entity [Object] the entity to persist
+            #
+            # @see Hanami::Model::Adapters::Gcloud::Dataset::Collection#persist
+            #
+            # @api private
+            # @since 0.1.0
+            def update(entity)
+              @collection.persist(entity)
+            end
+
+            # Persists an entity for the given hanami entity.
+            #
+            # @param entity [Object] the entity to persist
+            #
+            # @see Hanami::Model::Adapters::Gcloud::Dataset::Collection#persist
+            #
+            # @api private
+            # @since 0.1.0
+            def persist(entity)
+              @collection.persist(entity)
             end
 
             # Finds an entity for the given hanami entity.

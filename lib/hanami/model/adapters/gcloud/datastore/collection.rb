@@ -26,17 +26,15 @@ module Hanami
               @dataset, @mapped_collection = dataset, mapped_collection
             end
 
-            # Creates an entity for the given hanami entity and assigns an id.
+            # Persists an entity for the given hanami entity and assigns an id.
             #
             # @param entity [Object] the entity to persist
             #
             # @see Hanami::Model::Adapters::Gcloud::Datastore::Command#create
             #
-            # @return the primary key of the created record
-            #
             # @api private
             # @since 0.1.0
-            def insert(entity)
+            def persist(entity)
               persist_entity = @dataset.entity key_for(entity)
               _serialize(entity).each_pair do |key, value|
                 persist_entity[key.to_s] = value
