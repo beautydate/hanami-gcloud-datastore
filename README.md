@@ -20,7 +20,7 @@ Or install it yourself as:
 
 - [ ] .persist(entity) – Create or update an entity
 - [x] .create(entity) – Create a record for the given entity
-- [ ] .update(entity) – Update the record corresponding to the given entity
+- [x] .update(entity) – Update the record corresponding to the given entity
 - [x] .delete(entity) – Delete the record corresponding to the given entity
 - [ ] .all - Fetch all the entities from the collection
 - [x] .find - Fetch an entity from the collection by its ID
@@ -28,6 +28,10 @@ Or install it yourself as:
 - [ ] .last - Fetch the last entity from the collection
 - [x] ~~.clear - Delete all the records from the collection~~ *unsupported*
 - [ ] .query - Fabricates a query object
+
+## TODO
+
+- Define how will work [ancestor](http://googlecloudplatform.github.io/gcloud-ruby/docs/master/Gcloud/Datastore/Key.html#parent-instance_method) and [key](http://googlecloudplatform.github.io/gcloud-ruby/docs/master/Gcloud/Datastore/Key.html#id-instance_method) (including key with `id` or `name`).
 
 ## Development
 

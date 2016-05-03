@@ -34,6 +34,18 @@ module Hanami
               @collection.insert(entity)
             end
 
+            # Updates an entity for the given hanami entity.
+            #
+            # @param entity [Object] the entity to persist
+            #
+            # @see Hanami::Model::Adapters::Gcloud::Dataset::Collection#update
+            #
+            # @api private
+            # @since 0.1.0
+            def update(entity)
+              @collection.update(entity)
+            end
+
             # Finds an entity for the given hanami entity.
             #
             # @param id [Integer] the id of entity

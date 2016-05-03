@@ -61,6 +61,25 @@ describe Hanami::Model::Adapters::Gcloud::DatastoreAdapter do
     end
   end
 
+  describe '#update' do
+    let(:entity) { TestUser.new(name: 'test', age: 30) }
+
+    it 'updates the entity' do
+      old_entity = @adapter.create(collection, entity)
+
+      old_entity.name.must_equal 'test'
+      old_entity.age.must_equal 30
+
+      old_entity.name = 'test #2'
+      old_entity.age = 40
+      new_entity = @adapter.update(collection, old_entity)
+
+      new_entity.id.must_equal old_entity.id
+      new_entity.name.must_equal 'test #2'
+      new_entity.age.must_equal 40
+    end
+  end
+
   describe '#find' do
     let(:entity) { TestUser.new(name: 'test', age: 30) }
 

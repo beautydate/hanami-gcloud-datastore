@@ -37,13 +37,19 @@ module Hanami
             # @api private
             # @since 0.1.0
             def insert(entity)
-              persist_entity = @dataset.entity key_for(entity)
-              _serialize(entity).each_pair do |key, value|
-                persist_entity[key.to_s] = value
-              end
+              _persist(entity)
+            end
 
-              entity.id = @dataset.save(persist_entity).first.key.id
-              entity
+            # Updates the entity corresponding to the given hanami entity.
+            #
+            # @param entity [Object] the entity to persist
+            #
+            # @see Hanami::Model::Adapters::Gcloud::Datastore::Command#update
+            #
+            # @api private
+            # @since 0.1.0
+            def update(entity)
+              _persist(entity)
             end
 
             # Finds an entity for the given hanami entity and assigns an id.
@@ -112,6 +118,18 @@ module Hanami
               @mapped_collection.entity.new(
                 entity.properties.to_h.merge(id: entity.key.id)
               )
+            end
+
+            private
+
+            def _persist(entity)
+              persist_entity = @dataset.entity key_for(entity)
+              _serialize(entity).each_pair do |key, value|
+                persist_entity[key.to_s] = value
+              end
+
+              entity.id = @dataset.save(persist_entity).first.key.id
+              entity
             end
           end
         end
