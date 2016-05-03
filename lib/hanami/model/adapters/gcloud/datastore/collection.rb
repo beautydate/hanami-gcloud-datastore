@@ -26,30 +26,22 @@ module Hanami
               @dataset, @mapped_collection = dataset, mapped_collection
             end
 
-            # Creates an entity for the given hanami entity and assigns an id.
+            # Persists an entity for the given hanami entity and assigns an id.
             #
             # @param entity [Object] the entity to persist
             #
             # @see Hanami::Model::Adapters::Gcloud::Datastore::Command#create
             #
-            # @return the primary key of the created record
-            #
             # @api private
             # @since 0.1.0
-            def insert(entity)
-              _persist(entity)
-            end
+            def persist(entity)
+              persist_entity = @dataset.entity key_for(entity)
+              _serialize(entity).each_pair do |key, value|
+                persist_entity[key.to_s] = value
+              end
 
-            # Updates the entity corresponding to the given hanami entity.
-            #
-            # @param entity [Object] the entity to persist
-            #
-            # @see Hanami::Model::Adapters::Gcloud::Datastore::Command#update
-            #
-            # @api private
-            # @since 0.1.0
-            def update(entity)
-              _persist(entity)
+              entity.id = @dataset.save(persist_entity).first.key.id
+              entity
             end
 
             # Finds an entity for the given hanami entity and assigns an id.
@@ -118,18 +110,6 @@ module Hanami
               @mapped_collection.entity.new(
                 entity.properties.to_h.merge(id: entity.key.id)
               )
-            end
-
-            private
-
-            def _persist(entity)
-              persist_entity = @dataset.entity key_for(entity)
-              _serialize(entity).each_pair do |key, value|
-                persist_entity[key.to_s] = value
-              end
-
-              entity.id = @dataset.save(persist_entity).first.key.id
-              entity
             end
           end
         end

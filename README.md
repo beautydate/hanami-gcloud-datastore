@@ -18,7 +18,7 @@ Or install it yourself as:
 
 ## Repository supporting...
 
-- [ ] .persist(entity) – Create or update an entity
+- [x] .persist(entity) – Create or update an entity
 - [x] .create(entity) – Create a record for the given entity
 - [x] .update(entity) – Update the record corresponding to the given entity
 - [x] .delete(entity) – Delete the record corresponding to the given entity
