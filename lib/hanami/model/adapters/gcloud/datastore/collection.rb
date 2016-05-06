@@ -78,6 +78,12 @@ module Hanami
               @mapped_collection.entity.to_s
             end
 
+            def deserialize(entities)
+              entities.map do |entity|
+                _deserialize(entity)
+              end
+            end
+
             private
 
             # Return datastore key for entity

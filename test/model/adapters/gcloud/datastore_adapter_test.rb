@@ -39,6 +39,10 @@ describe Hanami::Model::Adapters::Gcloud::DatastoreAdapter do
     @adapter = Hanami::Model::Adapters::Gcloud::DatastoreAdapter.new(
       @mapper
     )
+
+    @adapter.query(collection).each do |entity|
+      @adapter.delete(collection, entity)
+    end
   end
 
   after do
@@ -62,7 +66,7 @@ describe Hanami::Model::Adapters::Gcloud::DatastoreAdapter do
   end
 
   describe '#update' do
-    let(:entity) { TestUser.new(name: 'test', age: 30) }
+    let(:entity) { TestUser.new(id: 2, name: 'test', age: 30) }
 
     it 'updates the entity' do
       old_entity = @adapter.create(collection, entity)
@@ -81,7 +85,7 @@ describe Hanami::Model::Adapters::Gcloud::DatastoreAdapter do
   end
 
   describe '#persist' do
-    let(:entity) { TestUser.new(name: 'test', age: 30) }
+    let(:entity) { TestUser.new(id: 3, name: 'test', age: 30) }
 
     it 'updates the entity' do
       old_entity = @adapter.persist(collection, entity)
@@ -100,7 +104,7 @@ describe Hanami::Model::Adapters::Gcloud::DatastoreAdapter do
   end
 
   describe '#find' do
-    let(:entity) { TestUser.new(name: 'test', age: 30) }
+    let(:entity) { TestUser.new(id: 4, name: 'test', age: 30) }
 
     it 'when no entity are persisted' do
       @adapter.find(collection, -8).must_equal nil
@@ -114,7 +118,7 @@ describe Hanami::Model::Adapters::Gcloud::DatastoreAdapter do
   end
 
   describe '#delete' do
-    let(:entity) { TestUser.new(name: 'test', age: 30) }
+    let(:entity) { TestUser.new(id: 5, name: 'test', age: 30) }
 
     it 'when entity are persisted' do
       subject = @adapter.create(collection, entity)
@@ -122,6 +126,110 @@ describe Hanami::Model::Adapters::Gcloud::DatastoreAdapter do
       @adapter.delete(collection, subject).must_equal true
 
       @adapter.find(collection, subject.id).must_equal nil
+    end
+  end
+
+  describe '#query' do
+    let(:entity_1) { TestUser.new(id: 31, name: 'test #1', age: 31) }
+    let(:entity_2) { TestUser.new(id: 32, name: 'test #2', age: 32) }
+    let(:entity_3) { TestUser.new(id: 33, name: 'test #3', age: 33) }
+    let(:entity_4) { TestUser.new(id: 34, name: 'test #4', age: 34) }
+    let(:entities) { [entity_1, entity_2, entity_3, entity_4] }
+
+    before do
+      @adapter.transaction do
+        entities.each do |e|
+          @adapter.create(collection, e)
+          sleep 0.5
+        end
+      end
+    end
+
+    describe 'when operator is equal' do
+      it 'returns one on count' do
+        result = @adapter.query(collection).where(name: 'test #1').all
+        result.count.must_equal 1
+      end
+
+      it 'returns entity' do
+        result = @adapter.query(collection).where(name: 'test #1').all
+
+        result.first.name.must_equal entity_1.name
+        result.first.age.must_equal entity_1.age
+      end
+    end
+
+    describe 'less than' do
+      it 'returns two on count' do
+        result = @adapter.query(collection).where { age < 33 }.all
+        result.count.must_equal 2
+      end
+
+      it 'returns entities' do
+        result = @adapter.query(collection).where { age < 33 }.all
+
+        result.first.name.must_equal entity_1.name
+        result.first.age.must_equal entity_1.age
+
+        result.last.name.must_equal entity_2.name
+        result.last.age.must_equal entity_2.age
+      end
+    end
+
+    describe 'less than or equal' do
+      it 'returns three on count' do
+        result = @adapter.query(collection).where { age <= 33 }.all
+        result.count.must_equal 3
+      end
+
+      it 'returns entities' do
+        result = @adapter.query(collection).where { age <= 33 }.all
+
+        result[0].name.must_equal entity_1.name
+        result[0].age.must_equal entity_1.age
+
+        result[1].name.must_equal entity_2.name
+        result[1].age.must_equal entity_2.age
+
+        result[2].name.must_equal entity_3.name
+        result[2].age.must_equal entity_3.age
+      end
+    end
+
+    describe 'greater than' do
+      it 'returns one on count' do
+        result = @adapter.query(collection).where { age > 33 }.all
+        result.count.must_equal 1
+      end
+
+      it 'returns entities' do
+        result = @adapter.query(collection).where { age > 33 }.all
+
+        result[0].name.must_equal entity_4.name
+        result[0].age.must_equal entity_4.age
+      end
+    end
+
+    describe 'greater than or equal' do
+      it 'returns two on count' do
+        result = @adapter.query(collection).where { age >= 33 }.all
+        result.count.must_equal 2
+      end
+
+      it 'returns entities' do
+        result = @adapter.query(collection).where { age >= 33 }.all
+
+        result[0].name.must_equal entity_3.name
+        result[0].age.must_equal entity_3.age
+
+        result[1].name.must_equal entity_4.name
+        result[1].age.must_equal entity_4.age
+      end
+    end
+
+    describe 'by id' do
+      it 'returns one on count'
+      it 'returns entity'
     end
   end
 
