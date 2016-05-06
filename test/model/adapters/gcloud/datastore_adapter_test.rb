@@ -134,102 +134,130 @@ describe Hanami::Model::Adapters::Gcloud::DatastoreAdapter do
     let(:entity_2) { TestUser.new(id: 32, name: 'test #2', age: 32) }
     let(:entity_3) { TestUser.new(id: 33, name: 'test #3', age: 33) }
     let(:entity_4) { TestUser.new(id: 34, name: 'test #4', age: 34) }
-    let(:entities) { [entity_1, entity_2, entity_3, entity_4] }
 
-    before do
-      @adapter.transaction do
-        entities.each do |e|
-          @adapter.create(collection, e)
-          sleep 0.5
-        end
-      end
+    it 'when operator is equal' do
+      entities = [entity_1, entity_2, entity_3, entity_4]
+      added_entities = entities.map { |e| @adapter.create(collection, e) }
+
+      result = @adapter.query(collection).where(name: 'test #1').all
+
+      result.count.must_equal 1
+
+      result.first.name.must_equal entity_1.name
+      result.first.age.must_equal entity_1.age
+
+      added_entities.each { |e| @adapter.delete(collection, e) }
     end
 
-    describe 'when operator is equal' do
-      it 'returns one on count' do
-        result = @adapter.query(collection).where(name: 'test #1').all
-        result.count.must_equal 1
-      end
+    it 'when operator is less than' do
+      entities = [entity_1, entity_2, entity_3, entity_4]
+      added_entities = entities.map { |e| @adapter.create(collection, e) }
 
-      it 'returns entity' do
-        result = @adapter.query(collection).where(name: 'test #1').all
+      result = @adapter.query(collection).where { age < 33 }.all
 
-        result.first.name.must_equal entity_1.name
-        result.first.age.must_equal entity_1.age
-      end
+      result.count.must_equal 2
+
+      result.first.name.must_equal entity_1.name
+      result.first.age.must_equal entity_1.age
+
+      result.last.name.must_equal entity_2.name
+      result.last.age.must_equal entity_2.age
+
+      added_entities.each { |e| @adapter.delete(collection, e) }
     end
 
-    describe 'less than' do
-      it 'returns two on count' do
-        result = @adapter.query(collection).where { age < 33 }.all
-        result.count.must_equal 2
-      end
+    it 'when operator is less than or equal' do
+      entities = [entity_1, entity_2, entity_3, entity_4]
+      added_entities = entities.map { |e| @adapter.create(collection, e) }
 
-      it 'returns entities' do
-        result = @adapter.query(collection).where { age < 33 }.all
+      result = @adapter.query(collection).where { age <= 33 }.all
 
-        result.first.name.must_equal entity_1.name
-        result.first.age.must_equal entity_1.age
+      result.count.must_equal 3
 
-        result.last.name.must_equal entity_2.name
-        result.last.age.must_equal entity_2.age
-      end
+      result[0].name.must_equal entity_1.name
+      result[0].age.must_equal entity_1.age
+
+      result[1].name.must_equal entity_2.name
+      result[1].age.must_equal entity_2.age
+
+      result[2].name.must_equal entity_3.name
+      result[2].age.must_equal entity_3.age
+
+      added_entities.each { |e| @adapter.delete(collection, e) }
     end
 
-    describe 'less than or equal' do
-      it 'returns three on count' do
-        result = @adapter.query(collection).where { age <= 33 }.all
-        result.count.must_equal 3
-      end
+    it 'when operator is greater than' do
+      entities = [entity_1, entity_2, entity_3, entity_4]
+      added_entities = entities.map { |e| @adapter.create(collection, e) }
 
-      it 'returns entities' do
-        result = @adapter.query(collection).where { age <= 33 }.all
+      result = @adapter.query(collection).where { age > 33 }.all
 
-        result[0].name.must_equal entity_1.name
-        result[0].age.must_equal entity_1.age
+      result.count.must_equal 1
 
-        result[1].name.must_equal entity_2.name
-        result[1].age.must_equal entity_2.age
+      result[0].name.must_equal entity_4.name
+      result[0].age.must_equal entity_4.age
 
-        result[2].name.must_equal entity_3.name
-        result[2].age.must_equal entity_3.age
-      end
+      added_entities.each { |e| @adapter.delete(collection, e) }
     end
 
-    describe 'greater than' do
-      it 'returns one on count' do
-        result = @adapter.query(collection).where { age > 33 }.all
-        result.count.must_equal 1
-      end
+    it 'when operator is greater than or equal' do
+      entities = [entity_1, entity_2, entity_3, entity_4]
+      added_entities = entities.map { |e| @adapter.create(collection, e) }
 
-      it 'returns entities' do
-        result = @adapter.query(collection).where { age > 33 }.all
+      result = @adapter.query(collection).where { age >= 33 }.all
 
-        result[0].name.must_equal entity_4.name
-        result[0].age.must_equal entity_4.age
-      end
+      result.count.must_equal 2
+
+      result = @adapter.query(collection).where { age >= 33 }.all
+
+      result[0].name.must_equal entity_3.name
+      result[0].age.must_equal entity_3.age
+
+      result[1].name.must_equal entity_4.name
+      result[1].age.must_equal entity_4.age
+
+      added_entities.each { |e| @adapter.delete(collection, e) }
     end
 
-    describe 'greater than or equal' do
-      it 'returns two on count' do
-        result = @adapter.query(collection).where { age >= 33 }.all
-        result.count.must_equal 2
-      end
+    it 'limiting result' do
+      entities = [entity_1, entity_2, entity_3]
+      added_entities = entities.map { |e| @adapter.create(collection, e) }
 
-      it 'returns entities' do
-        result = @adapter.query(collection).where { age >= 33 }.all
+      result = @adapter.query(collection).order(:name).limit(1).all
+      result.count.must_equal 1
+      result.first.id.must_equal entity_1.id
 
-        result[0].name.must_equal entity_3.name
-        result[0].age.must_equal entity_3.age
+      result = @adapter.query(collection).order(:name).limit(1).offset(1).all
+      result.count.must_equal 1
+      result.first.id.must_equal entity_2.id
 
-        result[1].name.must_equal entity_4.name
-        result[1].age.must_equal entity_4.age
-      end
+      added_entities.each { |e| @adapter.delete(collection, e) }
     end
 
-    describe 'by id' do
-      it 'returns one on count'
-      it 'returns entity'
+    it 'ordering result' do
+      entities = [entity_3, entity_1, entity_2]
+      added_entities = entities.map { |e| @adapter.create(collection, e) }
+
+      result = @adapter.query(collection).order(:name).all
+
+      result[0].id.must_equal entity_1.id
+      result[1].id.must_equal entity_2.id
+      result[2].id.must_equal entity_3.id
+
+      added_entities.each { |e| @adapter.delete(collection, e) }
+    end
+
+    it 'selecting attributes' do
+      entities = [entity_1]
+      added_entities = entities.map { |e| @adapter.create(collection, e) }
+
+      result = @adapter.query(collection).select(:name).all
+
+      result[0].id.must_equal entity_1.id
+      result[0].name.must_equal entity_1.name
+      result[0].age.must_equal nil
+
+      added_entities.each { |e| @adapter.delete(collection, e) }
     end
   end
 
