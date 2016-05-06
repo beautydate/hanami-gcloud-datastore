@@ -49,9 +49,7 @@ module Hanami
           # @api private
           # @since 0.1.0
           def create(collection, entity)
-            command(
-              query(collection)
-            ).create(entity)
+            command(collection).create(entity)
           end
 
           # Updates a entity in the datastore corresponding to the given hanami entity.
@@ -63,9 +61,7 @@ module Hanami
           #
           # @since 0.1.0
           def update(collection, entity)
-            command(
-              query(collection)
-            ).update(entity)
+            command(collection).update(entity)
           end
 
           # Persists a entity in the datastore corresponding to the given hanami entity.
@@ -77,9 +73,7 @@ module Hanami
           #
           # @since 0.1.0
           def persist(collection, entity)
-            command(
-              query(collection)
-            ).persist(entity)
+            command(collection).persist(entity)
           end
 
           # Returns a unique record from the given collection, with the given
@@ -93,17 +87,26 @@ module Hanami
           # @api private
           # @since 0.1.0
           def find(collection, id)
-            command(
-              query(collection)
-            ).find(id)
+            command(collection).find(id)
           end
 
-          # Empties the given collection.
-          #
-          # @param collection [Symbol] the target collection (it must be mapped).
-          #
-          # @since 0.1.0
-          def clear(collection)
+          def first(_)
+            raise NotImplementedError
+          end
+
+          def last(_)
+            raise NotImplementedError
+          end
+
+          def clear(_)
+            raise NotImplementedError
+          end
+
+          def fetch(_)
+            raise NotImplementedError
+          end
+
+          def execute(_)
             raise NotImplementedError
           end
 
@@ -114,9 +117,7 @@ module Hanami
           #
           # @since 0.1.0
           def delete(collection, entity)
-            command(
-              query(collection)
-            ).delete(entity)
+            command(collection).delete(entity)
           end
 
           # Fabricates a command for the given query.
@@ -130,8 +131,8 @@ module Hanami
           #
           # @api private
           # @since 0.1.0
-          def command(query)
-            Datastore::Command.new(query)
+          def command(collection)
+            Datastore::Command.new(_collection(collection))
           end
 
           # Fabricates a query
@@ -147,7 +148,20 @@ module Hanami
           # @api private
           # @since 0.1.0
           def query(collection, context = nil, &blk)
-            Datastore::Query.new(_collection(collection), context, &blk)
+            Datastore::Query.new(@connection, _collection(collection), &blk)
+          end
+
+          # Wraps the given block in a transaction (commit).
+          #
+          # @see Hanami::Repository::ClassMethods#transaction
+          #
+          # @since 0.1.0
+          # @api private
+          #
+          def transaction(options = {})
+            @connection.commit do
+              yield
+            end
           end
 
           private

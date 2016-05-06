@@ -16,8 +16,8 @@ module Hanami
             #
             # @api private
             # @since 0.1.0
-            def initialize(query)
-              @collection = query.scoped
+            def initialize(collection)
+              @collection = collection
             end
 
             # Creates an entity for the given hanami entity.

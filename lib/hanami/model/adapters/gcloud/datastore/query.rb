@@ -1,3 +1,4 @@
+require 'sequel/core'
 require 'forwardable'
 require 'hanami/utils/kernel'
 
@@ -42,8 +43,8 @@ module Hanami
             #   context of the current query
             #
             # @return [Hanami::Model::Adapters::Gcloud::Datastore::Query]
-            def initialize(collection, context = nil, &blk)
-              @collection, @context = collection, context
+            def initialize(dataset, collection, &blk)
+              @dataset, @collection = dataset, collection
               @conditions = []
 
               instance_eval(&blk) if block_given?
@@ -58,16 +59,170 @@ module Hanami
             #
             # @since 0.1.0
             def scoped
-              scope = @collection
+              scope = @dataset.query(@collection.kind)
 
               conditions.each do |(method,*args)|
                 scope = scope.public_send(method, *args)
               end
 
-              @collection
+              scope
             end
 
             alias_method :run, :scoped
+
+            # Adds a `WHERE` condition.
+            #
+            # It accepts a `Hash` with only one pair.
+            # The key must be the name of the column expressed as a `Symbol`.
+            # The value is the one used by the query
+            #
+            # @param condition [Hash]
+            #
+            # @return self
+            #
+            # @since 0.1.0
+            #
+            # @example Fixed value
+            #
+            #   query.where(language: 'ruby')
+            #
+            # @example Multiple conditions
+            #
+            #   query.where(language: 'ruby')
+            #        .where(framework: 'hanami')
+            #
+            # @example Expressions
+            #
+            #   query.where{ age > 10 }
+            def where(condition = nil, &blk)
+              _push_to_conditions(:where, condition || blk)
+              self
+            end
+
+            alias_method :and, :where
+
+            # Limit the number of entities to return.
+            #
+            # This operation is performed at the datastore level with `LIMIT`.
+            #
+            # @param number [Fixnum]
+            #
+            # @return self
+            #
+            # @since 0.1.0
+            #
+            # @example
+            #
+            #   query.limit(1)
+            def limit(number)
+              conditions.push([:limit, number])
+              self
+            end
+
+            # Specify an `OFFSET` clause.
+            #
+            # @param number [Fixnum]
+            #
+            # @return self
+            #
+            # @since 0.1.0
+            #
+            # @example
+            #
+            #   query.limit(1).offset(10)
+            def offset(number)
+              conditions.push([:offset, number])
+              self
+            end
+
+            # Specify the ascending order of the entities, sorted by the given
+            # columns.
+            #
+            # @param columns [Array<Symbol>] the column names
+            #
+            # @return self
+            #
+            # @since 0.1.0
+            def order(name, direction = :asc)
+              conditions.push([:order, name.to_s, direction])
+              self
+            end
+
+            # Group by the specified columns.
+            #
+            # @param columns [Array<Symbol>]
+            #
+            # @return self
+            #
+            # @since 0.1.0
+            #
+            # @example Single column
+            #
+            #   query.group(:name)
+            #
+            # @example Multiple columns
+            #
+            #   query.group(:name, :year)
+            def group(*columns)
+              conditions.push([:group_by, *columns.map(&:to_s)])
+              self
+            end
+
+            # Select only the specified columns.
+            #
+            # By default a query selects all the columns of a entity.
+            #
+            # @param columns [Array<Symbol>]
+            #
+            # @return self
+            #
+            # @since 0.1.0
+            #
+            # @example Single column
+            #
+            #   query.select(:name)
+            #
+            # @example Multiple columns
+            #
+            #   query.select(:name, :year)
+            def select(*columns)
+              conditions.push([:select, *columns.map(&:to_s)])
+              self
+            end
+
+            # Resolves the query by fetching entities from the datastore and
+            # translating them into entities.
+            #
+            # @return [Array] a collection of entities
+            #
+            # @since 0.1.0
+            def all
+              @collection.deserialize(@dataset.run(scoped))
+            end
+
+            private
+
+            def _push_to_conditions(condition_type, condition)
+              raise ArgumentError.new('You need to specify a condition') if condition.nil?
+
+              case condition
+              when Hash
+                condition.each_pair do |field, value|
+                  conditions.push([
+                    condition_type,
+                    field.to_s, '=', value
+                  ])
+                end
+              when Proc
+                condition = Sequel.virtual_row(&condition)
+                conditions.push([
+                  condition_type,
+                  condition.args[0].value.to_s, condition.op, condition.args[1]
+                ])
+              else
+                raise ArgumentError.new('This type is unsupported type for condition')
+              end
+            end
           end
         end
       end
