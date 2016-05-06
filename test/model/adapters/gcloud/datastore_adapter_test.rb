@@ -233,9 +233,33 @@ describe Hanami::Model::Adapters::Gcloud::DatastoreAdapter do
     end
   end
 
+  describe '#first' do
+    it 'raises an error' do
+      -> { @adapter.first(collection) }.must_raise NotImplementedError
+    end
+  end
+
+  describe '#last' do
+    it 'raises an error' do
+      -> { @adapter.last(collection) }.must_raise NotImplementedError
+    end
+  end
+
   describe '#clear' do
     it 'raises an error' do
       -> { @adapter.clear(collection) }.must_raise NotImplementedError
+    end
+  end
+
+  describe '#fetch' do
+    it 'raises an error' do
+      -> { @adapter.fetch(collection) }.must_raise NotImplementedError
+    end
+  end
+
+  describe '#execute' do
+    it 'raises an error' do
+      -> { @adapter.execute(collection) }.must_raise NotImplementedError
     end
   end
 end

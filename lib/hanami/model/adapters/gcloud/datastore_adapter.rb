@@ -90,12 +90,23 @@ module Hanami
             command(collection).find(id)
           end
 
-          # Empties the given collection.
-          #
-          # @param collection [Symbol] the target collection (it must be mapped).
-          #
-          # @since 0.1.0
-          def clear(collection)
+          def first(_)
+            raise NotImplementedError
+          end
+
+          def last(_)
+            raise NotImplementedError
+          end
+
+          def clear(_)
+            raise NotImplementedError
+          end
+
+          def fetch(_)
+            raise NotImplementedError
+          end
+
+          def execute(_)
             raise NotImplementedError
           end
 
