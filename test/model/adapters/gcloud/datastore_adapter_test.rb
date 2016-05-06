@@ -37,7 +37,7 @@ describe Hanami::Model::Adapters::Gcloud::DatastoreAdapter do
     end.load!
 
     @adapter = Hanami::Model::Adapters::Gcloud::DatastoreAdapter.new(
-      @mapper
+      @mapper, nil, {}
     )
 
     @adapter.query(collection).each do |entity|
