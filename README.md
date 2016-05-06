@@ -22,16 +22,23 @@ Or install it yourself as:
 - [x] .create(entity) – Create a record for the given entity
 - [x] .update(entity) – Update the record corresponding to the given entity
 - [x] .delete(entity) – Delete the record corresponding to the given entity
-- [ ] .all - Fetch all the entities from the collection
+- [x] .all - Fetch all the entities from the collection
 - [x] .find - Fetch an entity from the collection by its ID
-- [ ] .first - Fetch the first entity from the collection
-- [ ] .last - Fetch the last entity from the collection
-- [x] ~~.clear - Delete all the records from the collection~~ *unsupported*
-- [ ] .query - Fabricates a query object
+- [x] ~~.first - Fetch the first entity from the collection~~ **unsupported**
+- [x] ~~.last - Fetch the last entity from the collection~~ **unsupported**
+- [x] ~~.clear - Delete all the records from the collection~~ **unsupported**
+- [x] .query - Fabricates a query object
+  - [x] .where
+  - [x] .order
+  - [x] .select
+  - [x] .group
+  - [x] .limit
+  - [x] .offset
 
 ## TODO
 
 - Define how will work [ancestor](http://googlecloudplatform.github.io/gcloud-ruby/docs/master/Gcloud/Datastore/Key.html#parent-instance_method) and [key](http://googlecloudplatform.github.io/gcloud-ruby/docs/master/Gcloud/Datastore/Key.html#id-instance_method) (including key with `id` or `name`).
+- Improve documentation about how to run tests using emulator.
 
 ## Development
 
@@ -41,7 +48,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/vyper/hanami-gcloud-datastore.
+Bug reports and pull requests are welcome on GitHub at https://github.com/b2beauty/hanami-gcloud-datastore.
 
 ## License
 
