@@ -24,8 +24,8 @@ Or install it yourself as:
 - [x] .delete(entity) – Delete the record corresponding to the given entity
 - [x] .all - Fetch all the entities from the collection
 - [x] .find - Fetch an entity from the collection by its ID
-- [x] ~~.first - Fetch the first entity from the collection~~ **unsupported**
-- [x] ~~.last - Fetch the last entity from the collection~~ **unsupported**
+- [x] .first - Fetch the first entity from the collection
+- [x] .last - Fetch the last entity from the collection
 - [x] ~~.clear - Delete all the records from the collection~~ **unsupported**
 - [x] .query - Fabricates a query object
   - [x] .where

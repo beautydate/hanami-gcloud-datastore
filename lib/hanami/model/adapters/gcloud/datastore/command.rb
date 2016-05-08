@@ -72,6 +72,26 @@ module Hanami
               @collection.find(id)
             end
 
+            # Returns first entity from datastore
+            #
+            # @return the entity
+            #
+            # @api private
+            # @since 0.1.0
+            def first
+              @collection.first
+            end
+
+            # Returns last entity from datastore
+            #
+            # @return the entity
+            #
+            # @api private
+            # @since 0.1.0
+            def last
+              @collection.last
+            end
+
             # Deletes datastore entity.
             #
             # @param entity [Object] the entity to delete
