@@ -38,7 +38,7 @@ module Hanami
             @collections = {}
           end
 
-          # Creates a entity in the datastore for the given hanami entity.
+          # Creates an entity in the datastore for the given hanami entity.
           # It assigns the `id` attribute, in case of success.
           #
           # @param collection [Symbol] the target collection (it must be mapped).
@@ -52,7 +52,7 @@ module Hanami
             command(collection).create(entity)
           end
 
-          # Updates a entity in the datastore corresponding to the given hanami entity.
+          # Updates an entity in the datastore corresponding to the given hanami entity.
           #
           # @param collection [Symbol] the target collection (it must be mapped).
           # @param entity [Object] the entity to update
@@ -64,7 +64,7 @@ module Hanami
             command(collection).update(entity)
           end
 
-          # Persists a entity in the datastore corresponding to the given hanami entity.
+          # Persists an entity in the datastore corresponding to the given hanami entity.
           #
           # @param collection [Symbol] the target collection (it must be mapped).
           # @param entity [Object] the entity to persist
@@ -76,7 +76,7 @@ module Hanami
             command(collection).persist(entity)
           end
 
-          # Returns a unique record from the given collection, with the given
+          # Returns an unique record from the given collection, with the given
           # id.
           #
           # @param collection [Symbol] the target collection (it must be mapped).
@@ -90,12 +90,28 @@ module Hanami
             command(collection).find(id)
           end
 
-          def first(_)
-            raise NotImplementedError
+          # Returns a first record from the given collection.
+          #
+          # @param collection [Symbol] the target collection (it must be mapped).
+          #
+          # @return [Object] the entity or nil if not found
+          #
+          # @api private
+          # @since 0.1.0
+          def first(collection)
+            command(collection).first
           end
 
-          def last(_)
-            raise NotImplementedError
+          # Returns a last record from the given collection.
+          #
+          # @param collection [Symbol] the target collection (it must be mapped).
+          #
+          # @return [Object] the entity or nil if not found
+          #
+          # @api private
+          # @since 0.1.0
+          def last(collection)
+            command(collection).last
           end
 
           def clear(_)

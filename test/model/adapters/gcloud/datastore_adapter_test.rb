@@ -262,14 +262,46 @@ describe Hanami::Model::Adapters::Gcloud::DatastoreAdapter do
   end
 
   describe '#first' do
-    it 'raises an error' do
-      -> { @adapter.first(collection) }.must_raise NotImplementedError
+    it 'returns nil when collection is empty' do
+      result = @adapter.first(collection)
+      result.must_be_nil
+    end
+
+    it 'returns first element based on key order' do
+      entity_1 = TestUser.new(id: 31, name: 'test #1', age: 31)
+      entity_2 = TestUser.new(id: 32, name: 'test #2', age: 32)
+      entity_3 = TestUser.new(id: 33, name: 'test #3', age: 33)
+
+      entities = [entity_3, entity_1, entity_2]
+      added_entities = entities.map { |e| @adapter.create(collection, e) }
+
+      result = @adapter.first(collection)
+
+      result.id.must_equal entity_1.id
+
+      added_entities.each { |e| @adapter.delete(collection, e) }
     end
   end
 
   describe '#last' do
-    it 'raises an error' do
-      -> { @adapter.last(collection) }.must_raise NotImplementedError
+    it 'returns nil when collection is empty' do
+      result = @adapter.last(collection)
+      result.must_be_nil
+    end
+
+    it 'returns last element based on key order' do
+      entity_1 = TestUser.new(id: 31, name: 'test #1', age: 31)
+      entity_2 = TestUser.new(id: 32, name: 'test #2', age: 32)
+      entity_3 = TestUser.new(id: 33, name: 'test #3', age: 33)
+
+      entities = [entity_3, entity_1, entity_2]
+      added_entities = entities.map { |e| @adapter.create(collection, e) }
+
+      result = @adapter.last(collection)
+
+      result.id.must_equal entity_3.id
+
+      added_entities.each { |e| @adapter.delete(collection, e) }
     end
   end
 

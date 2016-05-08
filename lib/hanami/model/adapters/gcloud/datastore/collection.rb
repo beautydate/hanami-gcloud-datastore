@@ -44,11 +44,7 @@ module Hanami
               entity
             end
 
-            # Finds an entity for the given hanami entity and assigns an id.
-            #
-            # @param entity [Object] the entity to persist
-            #
-            # @return the primary key of the created record
+            # Finds an entity for the given hanami entity
             #
             # @api private
             # @since 0.1.0
@@ -56,6 +52,22 @@ module Hanami
               entity = @dataset.find kind, id
               return nil if entity.nil?
               _deserialize(entity)
+            end
+
+            # Returns first entity
+            #
+            # @api private
+            # @since 0.1.0
+            def first
+              fetch_one(:asc)
+            end
+
+            # Returns last entity
+            #
+            # @api private
+            # @since 0.1.0
+            def last
+              fetch_one(:desc)
             end
 
             # Deletes an entity
@@ -85,6 +97,13 @@ module Hanami
             end
 
             private
+
+            def fetch_one(order = :asc)
+              query = @dataset.query(kind).order('__key__', order).limit(1)
+              entity = @dataset.run(query).first
+              return nil if entity.nil?
+              _deserialize(entity)
+            end
 
             # Return datastore key for entity
             #
