@@ -164,7 +164,12 @@ module Hanami
           # @api private
           # @since 0.1.0
           def query(collection, context = nil, &blk)
-            Datastore::Query.new(@connection, _collection(collection), &blk)
+            Datastore::Query.new(
+              @connection,
+              _collection(collection),
+              _mapped_collection(collection),
+              &blk
+            )
           end
 
           # Wraps the given block in a transaction (commit).

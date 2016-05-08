@@ -43,8 +43,10 @@ module Hanami
             #   context of the current query
             #
             # @return [Hanami::Model::Adapters::Gcloud::Datastore::Query]
-            def initialize(dataset, collection, &blk)
-              @dataset, @collection = dataset, collection
+            def initialize(dataset, collection, mapped_collection, &blk)
+              @dataset = dataset
+              @collection = collection
+              @mapped_collection = mapped_collection
               @conditions = []
 
               instance_eval(&blk) if block_given?
@@ -144,7 +146,7 @@ module Hanami
             #
             # @since 0.1.0
             def order(name, direction = :asc)
-              conditions.push([:order, name.to_s, direction])
+              conditions.push([:order, _mapped_attribute(name), direction])
               self
             end
 
@@ -164,7 +166,7 @@ module Hanami
             #
             #   query.group(:name, :year)
             def group(*columns)
-              conditions.push([:group_by, *columns.map(&:to_s)])
+              conditions.push([:group_by, *columns.map { |c| _mapped_attribute(c) }])
               self
             end
 
@@ -186,7 +188,7 @@ module Hanami
             #
             #   query.select(:name, :year)
             def select(*columns)
-              conditions.push([:select, *columns.map(&:to_s)])
+              conditions.push([:select, *columns.map { |c| _mapped_attribute(c) }])
               self
             end
 
@@ -202,6 +204,10 @@ module Hanami
 
             private
 
+            def _mapped_attribute(attribute)
+              @mapped_collection.attributes[attribute].mapped.to_s
+            end
+
             def _push_to_conditions(condition_type, condition)
               raise ArgumentError.new('You need to specify a condition') if condition.nil?
 
@@ -210,14 +216,14 @@ module Hanami
                 condition.each_pair do |field, value|
                   conditions.push([
                     condition_type,
-                    field.to_s, '=', value
+                    _mapped_attribute(field), '=', value
                   ])
                 end
               when Proc
                 condition = Sequel.virtual_row(&condition)
                 conditions.push([
                   condition_type,
-                  condition.args[0].value.to_s, condition.op, condition.args[1]
+                  _mapped_attribute(condition.args[0].value), condition.op, condition.args[1]
                 ])
               else
                 raise ArgumentError.new('This type is unsupported type for condition')

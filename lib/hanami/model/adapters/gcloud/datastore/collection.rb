@@ -37,7 +37,9 @@ module Hanami
             def persist(entity)
               persist_entity = @dataset.entity key_for(entity)
               _serialize(entity).each_pair do |key, value|
-                persist_entity[key.to_s] = value
+                if key != @mapped_collection.identity
+                  persist_entity[key.to_s] = value
+                end
               end
 
               entity.id = @dataset.save(persist_entity).first.key.id
@@ -133,7 +135,13 @@ module Hanami
             # @since 0.1.0
             def _deserialize(entity)
               @mapped_collection.entity.new(
-                entity.properties.to_h.merge(id: entity.key.id)
+                @mapped_collection.attributes.inject({}) do |hash, (key, element)|
+                  if key != @mapped_collection.identity
+                    hash[key] = entity.properties[element.mapped.to_s]
+                  end
+
+                  hash
+                end.merge(id: entity.key.id || entity.key.name)
               )
             end
           end
