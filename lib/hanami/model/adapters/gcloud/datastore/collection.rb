@@ -89,7 +89,10 @@ module Hanami
             # @api private
             # @since 0.1.0
             def kind
-              @mapped_collection.entity.to_s
+              Hanami::Utils::String.new(@mapped_collection.name).
+                classify.
+                singularize.
+                to_s
             end
 
             def deserialize(entities)
