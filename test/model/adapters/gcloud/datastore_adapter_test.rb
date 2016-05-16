@@ -25,13 +25,13 @@ describe Hanami::Model::Adapters::Gcloud::DatastoreAdapter do
       @mapper, nil, {}
     )
 
-    while entity = @adapter.last(collection)
+    while entity = @adapter.first(collection)
       @adapter.delete(collection, entity)
     end
   end
 
   after do
-    while entity = @adapter.last(collection)
+    while entity = @adapter.first(collection)
       @adapter.delete(collection, entity)
     end
 
