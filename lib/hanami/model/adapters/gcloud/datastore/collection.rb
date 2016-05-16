@@ -42,7 +42,8 @@ module Hanami
                 end
               end
 
-              entity.id = @dataset.save(persist_entity).first.key.id
+              saved = @dataset.save(persist_entity).first
+              entity.id = saved.key.id || saved.key.name
               entity
             end
 
@@ -117,7 +118,7 @@ module Hanami
             # @api private
             # @since 0.1.0
             def key_for(entity)
-              @dataset.key kind, entity.id
+              @dataset.key kind, entity.public_send(@mapped_collection.identity)
             end
 
             # Serialize the given entity before to persist in the datastore.
@@ -144,7 +145,7 @@ module Hanami
                   end
 
                   hash
-                end.merge(id: entity.key.id || entity.key.name)
+                end.merge(@mapped_collection.identity => entity.key.id || entity.key.name)
               )
             end
           end
