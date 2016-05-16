@@ -18,6 +18,8 @@ Or install it yourself as:
 
 ## Repository supporting...
 
+**WARNING**: For some queries it's necessary [create indexes](https://cloud.google.com/datastore/docs/concepts/indexes#index_configuration) to work correctly.
+
 - [x] .persist(entity) – Create or update an entity
 - [x] .create(entity) – Create a record for the given entity
 - [x] .update(entity) – Update the record corresponding to the given entity
@@ -35,16 +37,23 @@ Or install it yourself as:
   - [x] .limit
   - [x] .offset
 
-## TODO
+## Testing
 
-- Define how will work [ancestor](http://googlecloudplatform.github.io/gcloud-ruby/docs/master/Gcloud/Datastore/Key.html#parent-instance_method) and [key](http://googlecloudplatform.github.io/gcloud-ruby/docs/master/Gcloud/Datastore/Key.html#id-instance_method) (including key with `id` or `name`).
-- Improve documentation about how to run tests using emulator.
+To run tests locally is necessary download the gcd and run:
 
-## Development
+```bash
+curl -O https://storage.googleapis.com/gcd/tools/gcd-grpc-1.0.0.zip
+unzip gcd-grpc-1.0.0.zip
+cd gcd
+./gcd.sh create data
+./gcd.sh start data
+export DATASTORE_EMULATOR_HOST=localhost:8080
+export DATASTORE_DATASET=testing-project
+export DATASTORE_PROJECT_ID=testing-project
+rake test
+```
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+We need improvement in tests to not receive error randomly. ):
 
 ## Contributing
 
