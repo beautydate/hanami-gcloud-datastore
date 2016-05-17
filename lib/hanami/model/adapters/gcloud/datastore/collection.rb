@@ -43,7 +43,7 @@ module Hanami
               end
 
               saved = @dataset.save(persist_entity).first
-              entity.id = saved.key.id || saved.key.name
+              entity.id = identity_coercer.load(saved.key)
               entity
             end
 
@@ -52,7 +52,10 @@ module Hanami
             # @api private
             # @since 0.1.0
             def find(id)
-              entity = @dataset.find kind, id
+              if _id = identity_coercer.dump(id)
+                entity = @dataset.find _id
+              end
+
               return nil if entity.nil?
               _deserialize(entity)
             end
@@ -111,6 +114,10 @@ module Hanami
               _deserialize(entity)
             end
 
+            def identity_coercer
+              @mapped_collection.attributes[@mapped_collection.identity].send(:coercer)
+            end
+
             # Return datastore key for entity
             #
             # @return [Gcloud::Datastore::Key] entity key
@@ -118,7 +125,11 @@ module Hanami
             # @api private
             # @since 0.1.0
             def key_for(entity)
-              @dataset.key kind, entity.public_send(@mapped_collection.identity)
+              if _id = entity.public_send(@mapped_collection.identity)
+                return identity_coercer.dump(_id)
+              end
+
+              @dataset.key kind, nil
             end
 
             # Serialize the given entity before to persist in the datastore.
@@ -140,12 +151,14 @@ module Hanami
             def _deserialize(entity)
               @mapped_collection.entity.new(
                 @mapped_collection.attributes.inject({}) do |hash, (key, element)|
-                  if key != @mapped_collection.identity
-                    hash[key] = entity.properties[element.mapped.to_s]
+                  if key == @mapped_collection.identity
+                    hash[key] = identity_coercer.load(entity.key)
+                  else
+                    hash[key] = element.send(:coercer).load(entity.properties[element.mapped.to_s])
                   end
 
                   hash
-                end.merge(@mapped_collection.identity => entity.key.id || entity.key.name)
+                end
               )
             end
           end

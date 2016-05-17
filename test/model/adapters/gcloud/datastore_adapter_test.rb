@@ -13,9 +13,10 @@ describe Hanami::Model::Adapters::Gcloud::DatastoreAdapter do
 
     @mapper = Hanami::Model::Mapper.new do
       collection :test_users do
-        entity TestUser
+        entity     TestUser
+        repository TestUserRepository
 
-        attribute :id,   String
+        attribute :id,   Hanami::Gcloud::Datastore::Coercers::Key
         attribute :name, String
         attribute :age,  Integer, as: :Age
       end
@@ -53,7 +54,8 @@ describe Hanami::Model::Adapters::Gcloud::DatastoreAdapter do
   end
 
   describe '#update' do
-    let(:entity) { TestUser.new(id: 2, name: 'test', age: 30) }
+    let(:key) { Hanami::Gcloud::Datastore::Coercers::Key.create('TestUser', 2, { 'project' => ENV['DATASTORE_DATASET'] }) }
+    let(:entity) { TestUser.new(id: key, name: 'test', age: 30) }
 
     it 'updates the entity' do
       old_entity = @adapter.create(collection, entity)
@@ -72,7 +74,8 @@ describe Hanami::Model::Adapters::Gcloud::DatastoreAdapter do
   end
 
   describe '#persist' do
-    let(:entity) { TestUser.new(id: 3, name: 'test', age: 30) }
+    let(:key) { Hanami::Gcloud::Datastore::Coercers::Key.create('TestUser', 3, { 'project' => ENV['DATASTORE_DATASET'] }) }
+    let(:entity) { TestUser.new(id: key, name: 'test', age: 30) }
 
     it 'updates the entity' do
       old_entity = @adapter.persist(collection, entity)
@@ -91,7 +94,8 @@ describe Hanami::Model::Adapters::Gcloud::DatastoreAdapter do
   end
 
   describe '#find' do
-    let(:entity) { TestUser.new(id: 4, name: 'test', age: 30) }
+    let(:key) { Hanami::Gcloud::Datastore::Coercers::Key.create('TestUser', 4, { 'project' => ENV['DATASTORE_DATASET'] }) }
+    let(:entity) { TestUser.new(id: key, name: 'test', age: 30) }
 
     it 'when no entity are persisted' do
       @adapter.find(collection, -8).must_equal nil
@@ -105,7 +109,8 @@ describe Hanami::Model::Adapters::Gcloud::DatastoreAdapter do
   end
 
   describe '#delete' do
-    let(:entity) { TestUser.new(id: 5, name: 'test', age: 30) }
+    let(:key) { Hanami::Gcloud::Datastore::Coercers::Key.create('TestUser', 5, { 'project' => ENV['DATASTORE_DATASET'] }) }
+    let(:entity) { TestUser.new(id: key, name: 'test', age: 30) }
 
     it 'when entity are persisted' do
       subject = @adapter.create(collection, entity)
@@ -117,10 +122,14 @@ describe Hanami::Model::Adapters::Gcloud::DatastoreAdapter do
   end
 
   describe '#query' do
-    let(:entity_1) { TestUser.new(id: 31, name: 'test #1', age: 31) }
-    let(:entity_2) { TestUser.new(id: 32, name: 'test #2', age: 32) }
-    let(:entity_3) { TestUser.new(id: 33, name: 'test #3', age: 33) }
-    let(:entity_4) { TestUser.new(id: 34, name: 'test #4', age: 34) }
+    let(:key_1) { Hanami::Gcloud::Datastore::Coercers::Key.create('TestUser', 31, { 'project' => ENV['DATASTORE_DATASET'] }) }
+    let(:key_2) { Hanami::Gcloud::Datastore::Coercers::Key.create('TestUser', 32, { 'project' => ENV['DATASTORE_DATASET'] }) }
+    let(:key_3) { Hanami::Gcloud::Datastore::Coercers::Key.create('TestUser', 33, { 'project' => ENV['DATASTORE_DATASET'] }) }
+    let(:key_4) { Hanami::Gcloud::Datastore::Coercers::Key.create('TestUser', 34, { 'project' => ENV['DATASTORE_DATASET'] }) }
+    let(:entity_1) { TestUser.new(id: key_1, name: 'test #1', age: 31) }
+    let(:entity_2) { TestUser.new(id: key_2, name: 'test #2', age: 32) }
+    let(:entity_3) { TestUser.new(id: key_3, name: 'test #3', age: 33) }
+    let(:entity_4) { TestUser.new(id: key_4, name: 'test #4', age: 34) }
 
     it 'when operator is equal' do
       entities = [entity_1, entity_2, entity_3, entity_4]
@@ -239,9 +248,12 @@ describe Hanami::Model::Adapters::Gcloud::DatastoreAdapter do
     end
 
     it 'returns first element based on key order' do
-      entity_1 = TestUser.new(id: 31, name: 'test #1', age: 31)
-      entity_2 = TestUser.new(id: 32, name: 'test #2', age: 32)
-      entity_3 = TestUser.new(id: 33, name: 'test #3', age: 33)
+      key_1    = Hanami::Gcloud::Datastore::Coercers::Key.create('TestUser', 31, { 'project' => ENV['DATASTORE_DATASET'] })
+      key_2    = Hanami::Gcloud::Datastore::Coercers::Key.create('TestUser', 32, { 'project' => ENV['DATASTORE_DATASET'] })
+      key_3    = Hanami::Gcloud::Datastore::Coercers::Key.create('TestUser', 33, { 'project' => ENV['DATASTORE_DATASET'] })
+      entity_1 = TestUser.new(id: key_1, name: 'test #1', age: 31)
+      entity_2 = TestUser.new(id: key_2, name: 'test #2', age: 32)
+      entity_3 = TestUser.new(id: key_3, name: 'test #3', age: 33)
 
       entities = [entity_3, entity_1, entity_2]
       added_entities = entities.map { |e| @adapter.create(collection, e) }
@@ -260,9 +272,12 @@ describe Hanami::Model::Adapters::Gcloud::DatastoreAdapter do
     end
 
     it 'returns last element based on key order' do
-      entity_1 = TestUser.new(id: 31, name: 'test #1', age: 31)
-      entity_2 = TestUser.new(id: 32, name: 'test #2', age: 32)
-      entity_3 = TestUser.new(id: 33, name: 'test #3', age: 33)
+      key_1    = Hanami::Gcloud::Datastore::Coercers::Key.create('TestUser', 31, { 'project' => ENV['DATASTORE_DATASET'] })
+      key_2    = Hanami::Gcloud::Datastore::Coercers::Key.create('TestUser', 32, { 'project' => ENV['DATASTORE_DATASET'] })
+      key_3    = Hanami::Gcloud::Datastore::Coercers::Key.create('TestUser', 33, { 'project' => ENV['DATASTORE_DATASET'] })
+      entity_1 = TestUser.new(id: key_1, name: 'test #1', age: 31)
+      entity_2 = TestUser.new(id: key_2, name: 'test #2', age: 32)
+      entity_3 = TestUser.new(id: key_3, name: 'test #3', age: 33)
 
       entities = [entity_3, entity_1, entity_2]
       added_entities = entities.map { |e| @adapter.create(collection, e) }
