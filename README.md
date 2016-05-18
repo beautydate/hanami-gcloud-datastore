@@ -37,6 +37,60 @@ Or install it yourself as:
   - [x] .limit
   - [x] .offset
 
+## To use
+
+### Create entity and repository
+
+```ruby
+class User
+  include Hanami::Entity
+  attributes :id, :name, :age
+end
+
+class UserRepository
+  include Hanami::Repository
+end
+```
+
+### Configure your mapping
+
+**Important**: Use our `coerce` for your key.
+
+```ruby
+collection :users do
+  entity     User
+  repository UserRepository
+
+  attribute :id,   Hanami::Gcloud::Datastore::Coercers::Key
+  attribute :name, String
+  attribute :age,  Integer, as: :Age
+end
+```
+
+### Now... use! (:
+
+```ruby
+# getting first
+UserRepository.first
+# => nil
+
+# creating an user
+user = User.new(name: 'Leonardo', age: 7)
+user = UserRepository.create(user)
+# => #<User:0x007fef032a3920 @id="WyJVc2VyIiwyMix7InByb2plY3QiOiJ0ZXN0aW5nLXByb2plY3QifV0=\n" @name="Leonardo" @age=7>
+
+# getting the user
+user = UserRepository.find(user.id)
+# => #<User:0x007fef02c0cc10 @id="WyJVc2VyIiwyMyx7InByb2plY3QiOiJ0ZXN0aW5nLXByb2plY3QifV0=\n" @name="Leonardo" @age=7>
+
+# composite key
+id = Hanami::Gcloud::Datastore::Coercers::Key.create('User', '1', namespace: 'my-namespace')
+# => "WyJVc2VyIiwiMSIseyJuYW1lc3BhY2UiOiJteS1uYW1lc3BhY2UifV0=\n"
+user = User.new(id: id, name: 'Leonardo', age: 7)
+user = UserRepository.persist(user)
+# => #<User:0x007fef032a3920 @id="WyJVc2VyIiwyMix7InByb2plY3QiOiJ0ZXN0aW5nLXByb2plY3QifV0=\n" @name="Leonardo" @age=7>
+```
+
 ## Testing
 
 To run tests locally is necessary download the gcd and run:
