@@ -1,5 +1,7 @@
 # Hanami::Gcloud::Datastore
 
+> :warning: This project is freezed because the [newer version](https://gitter.im/hanami/chat?at=573f173008a18f700b8220f9) of [hanami-model](https://github.com/hanami/model) is in developing. 
+
 ## Installation
 
 Add this line to your application's Gemfile:
