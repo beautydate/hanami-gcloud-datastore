@@ -1,4 +1,4 @@
-require 'gcloud/datastore'
+require 'google/cloud/datastore'
 require 'hanami/model/adapters/abstract'
 require 'hanami/model/adapters/implementation'
 require 'hanami/model/adapters/gcloud/datastore/collection'
@@ -9,7 +9,7 @@ module Hanami
   module Model
     module Adapters
       module Gcloud
-        # Adapter for Gcloud Datastore
+        # Adapter for Google Cloud Datastore
         #
         # @api private
         # @since 0.1.0
@@ -18,9 +18,9 @@ module Hanami
 
           # Initialize the adapter.
           #
-          # Hanami::Model uses Gcloud::Datastore.
+          # Hanami::Model uses Google::Cloud::Datastore.
           # For a complete reference of the connection please see:
-          # http://googlecloudplatform.github.io/gcloud-ruby/docs/master/Gcloud/Datastore.html
+          # http://googlecloudplatform.github.io/google-cloud-ruby/#/docs/google-cloud/v0.20.1/google/cloud/datastore
           #
           # @param mapper [Object] the database mapper
           #
@@ -33,7 +33,7 @@ module Hanami
           def initialize(mapper, uri, options = {})
             super
 
-            @connection = ::Gcloud.datastore
+            @connection = Google::Cloud.new.datastore
 
             @collections = {}
           end

@@ -8,12 +8,12 @@ module Hanami
           # @api private
           # @since 0.1.0
           #
-          # @see http://googlecloudplatform.github.io/gcloud-ruby/docs/master/Gcloud/Datastore/Dataset.html
-          # @see http://googlecloudplatform.github.io/gcloud-ruby/docs/master/Gcloud/Datastore/Query.html
+          # @see http://googlecloudplatform.github.io/google-cloud-ruby/#/docs/google-cloud/v0.20.1/google/cloud/datastore/dataset
+          # @see http://googlecloudplatform.github.io/google-cloud-ruby/#/docs/google-cloud/v0.20.1/google/cloud/datastore/query
           class Collection
             # Initialize a collection
             #
-            # @param dataset [Gcloud::Datastore::Dataset] the dataset that maps
+            # @param dataset [Google::Cloud::Datastore::Dataset] the dataset that maps
             #   a table or a subset of it.
             # @param mapped_collection [Hanami::Model::Mapping::Collection] a
             #   mapped collection
@@ -35,6 +35,7 @@ module Hanami
             # @api private
             # @since 0.1.0
             def persist(entity)
+              # binding.pry
               persist_entity = @dataset.entity key_for(entity)
               _serialize(entity).each_pair do |key, value|
                 if key != @mapped_collection.identity
@@ -120,7 +121,7 @@ module Hanami
 
             # Return datastore key for entity
             #
-            # @return [Gcloud::Datastore::Key] entity key
+            # @return [Google::Cloud::Datastore::Key] entity key
             #
             # @api private
             # @since 0.1.0

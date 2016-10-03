@@ -1,7 +1,7 @@
 require 'hanami/model/coercer'
 require 'base64'
 require 'json'
-require 'gcloud/datastore/key'
+require 'google/cloud/datastore/key'
 
 module Hanami
   module Gcloud
@@ -53,7 +53,7 @@ module Hanami
           end
 
           def deserialize_key(kind, id, opts = {})
-            key = ::Gcloud::Datastore::Key.new kind, id
+            key = Google::Cloud::Datastore::Key.new kind, id
             key.namespace = opts['namespace'] if opts.include? 'namespace'
             key.project = opts['project'] if opts.include? 'project'
             key.parent = deserialize_key(*opts['parent']) if opts.include? 'parent'

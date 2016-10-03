@@ -2,13 +2,13 @@ require 'test_helper'
 
 describe Hanami::Gcloud::Datastore::Coercers::Key do
   let(:parent_parent) do
-    key = Gcloud::Datastore::Key.new('ParentParent', 'parent-parent')
+    key = Google::Cloud::Datastore::Key.new('ParentParent', 'parent-parent')
     key.project = 'project'
     key
   end
 
   let(:parent) do
-    key = Gcloud::Datastore::Key.new('Parent', 'parent')
+    key = Google::Cloud::Datastore::Key.new('Parent', 'parent')
     key.namespace = 'namespace-parent'
     key.parent = parent_parent
     key.project = 'project'
@@ -16,7 +16,7 @@ describe Hanami::Gcloud::Datastore::Coercers::Key do
   end
 
   let(:entity) do
-    key = Gcloud::Datastore::Key.new('Kind', 'id')
+    key = Google::Cloud::Datastore::Key.new('Kind', 'id')
     key.parent = parent
     key.namespace = 'namespace'
     key.project = 'project'
